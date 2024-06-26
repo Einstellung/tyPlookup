@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "plonk",
+    "kgz",
+    "permutation"
+]

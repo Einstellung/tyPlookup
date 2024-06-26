@@ -1,0 +1,27 @@
+[package]
+name = "plonk"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+ark-ff = "0.3"
+ark-poly = "0.3"
+ark-ec = "0.3"
+ark-bls12-381 = "0.3"
+ark-serialize = "0.3"
+rand = {version = "0.8", optional = true}
+kgz = {path = "../kgz"}
+blake2  = {version = "0.9.2"}
+permutation = { path = "../permutation"}
+
+[features]
+default = ["rand"]
+
+[build-dependencies]
+skeptic = "0.13"
+
+[dev-dependencies]
+skeptic = "0.13"
