@@ -3,8 +3,7 @@ use ark_bls12_381::{Bls12_381, Fr};
 use ark_ec::{AffineCurve, PairingEngine};
 use ark_poly::{univariate::DensePolynomial, Polynomial, UVPolynomial};
 use std::{
-    fmt::{Debug, Display},
-    ops::{Add, Mul, Neg, Sub},
+    fmt::{Debug, Display}, ops::{Add, Mul, Neg, Sub}
 };
 
 pub mod srs;
@@ -38,6 +37,7 @@ impl<'a> KzgScheme<'a> {
         let commitment = self.evaluate_in_s(polynomial);
         KzgCommitment(commitment)
     }
+    // a_0*s_0 + a_1*s_1 + ...
     fn evaluate_in_s(&self, polynomial: &MyPoly) -> G1Point {
         let srs = self.0.g1_ref();
         assert!(srs.len() > polynomial.degree());
@@ -52,6 +52,7 @@ impl<'a> KzgScheme<'a> {
             .sum();
         point
     }
+    /// kzgopening(h(s), eval_point)
     pub fn open(&self, mut polynomial: MyPoly, z: impl Into<Fr>) -> KzgOpening {
         let z = z.into();
         let evaluation_at_z = polynomial.evaluate(&z);
@@ -115,6 +116,16 @@ impl Add for KzgCommitment {
         Self(commitment.into())
     }
 }
+impl Add<Fr> for KzgCommitment {
+    type Output = Self;
+
+    fn add(self, rths: Fr) -> Self::Output {
+        let generator = G1Point::prime_subgroup_generator();
+        let scalar_point = generator.mul(rths).try_into().unwrap();
+        let result = self.0.add(scalar_point);
+        Self(result.into())
+    }
+}
 impl Add for KzgOpening {
     type Output = Self;
 
@@ -124,6 +135,7 @@ impl Add for KzgOpening {
         Self(witness, eval)
     }
 }
+
 impl Sub for KzgCommitment {
     type Output = Self;
 

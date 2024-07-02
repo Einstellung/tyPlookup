@@ -9,6 +9,9 @@ use std::marker::PhantomData;
 pub mod builder;
 pub mod description;
 mod proof;
+mod challenges;
+mod single_lookup;
+mod multiset;
 mod utils;
 
 pub type G1Point = <ark_bls12_381::Bls12_381 as PairingEngine>::G1Affine;

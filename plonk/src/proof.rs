@@ -9,7 +9,7 @@ use ark_ff::{Field, One, UniformRand, Zero};
 use ark_poly::{
     univariate::DensePolynomial, EvaluationDomain, Evaluations, Polynomial, UVPolynomial,
 };
-use challenges::ChallengeGenerator;
+use crate::challenges::ChallengeGenerator;
 use kgz::{KzgCommitment, KzgOpening, KzgScheme};
 use permutation::CompiledPermutation;
 use std::{
@@ -20,7 +20,6 @@ use std::{
     sync::Mutex,
 };
 
-mod challenges;
 
 impl<const I: usize, C: CircuitDescription<I>> CompiledCircuit<I, C> {
     pub fn prove(&self, inputs: [impl Into<Fr>; I], public_inputs: Vec<impl Into<Fr>>) -> Proof {
@@ -64,8 +63,8 @@ impl<const I: usize, C: CircuitDescription<I>> CompiledCircuit<I, C> {
 
 #[derive(Debug)]
 pub struct PolyProof {
-    commitment: KzgCommitment,
-    opening: KzgOpening,
+    pub commitment: KzgCommitment,
+    pub opening: KzgOpening,
 }
 impl Display for PolyProof {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -501,8 +500,9 @@ fn linearisation_commitment<const I: usize, C: CircuitDescription<I>>(
 
     line1 + (line2 - (line3 + scheme.identity() * constant)) - line5
 }
+/// checks whether a polynomial vanishes on a specific domain, 
+/// in other words it verifies if the polynomial is zero at all the points in the domain.
 pub fn vanishes(poly: &Poly, domain: impl EvaluationDomain<Fr>) {
     let (_, rest) = poly.divide_by_vanishing_poly(domain).unwrap();
     assert!(rest.is_zero());
-    //println!("vanishes");
 }
